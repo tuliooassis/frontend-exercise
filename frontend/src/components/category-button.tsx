@@ -8,15 +8,15 @@ export function CategoryButton({
   favorite = false,
   selected = false,
 }: {
+  id: string;
   label: string;
   favorite?: boolean;
   selected?: boolean;
 }) {
-  const { setSelectedCategory, categoriesById, setFavorite } =
-    useFeedProvider();
+  const { selectCategory, categoriesById, setFavorite } = useFeedProvider();
 
   const getStarColor = () => {
-    const colors = {
+    const colors: Record<string, Record<string, string>> = {
       true: {
         true: "primary",
         false: "accent",
@@ -35,8 +35,7 @@ export function CategoryButton({
       variant={selected ? "outline" : "default"}
       className={"border-primary rounded capitalize gap-2"}
       onClick={() => {
-        setSelectedCategory(categoriesById[id]);
-        console.log("button");
+        selectCategory(categoriesById[id]);
       }}
     >
       {label}

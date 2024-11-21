@@ -1,16 +1,23 @@
+import { Category, Post } from "./shared-types";
+
 export const API = "http://localhost:9000";
 
-export async function getCategories() {
+export async function getCategories(): Promise<Category[]> {
   return fetch(`${API}/categories`).then((res) => res.json());
 }
 
-export async function getPostsFromCategory(categoryId: string) {
+export async function getPostsFromCategory(
+  categoryId: string
+): Promise<Post[]> {
   return fetch(`${API}/categories/${categoryId}/posts`).then((res) =>
     res.json()
   );
 }
 
-export async function setCategory(id: string, data) {
+export async function setCategory(
+  id: string,
+  data: Partial<Category>
+): Promise<Category> {
   return fetch(`${API}/categories/${id}`, {
     method: "PUT",
     headers: {

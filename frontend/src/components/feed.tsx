@@ -20,12 +20,13 @@ function formatDate(dateString: string) {
     }
   }
 
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
   };
+
   const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(date);
   const formattedDate = parts
     .map((part) => {

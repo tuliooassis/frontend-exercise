@@ -1,16 +1,15 @@
-import { getCategories, getPostsFromCategory, setCategory } from "@/api/api";
-import {
+import { getCategories, getPostsFromCategory, setCategory } from "@/api";
+
+import React, {
   createContext,
   useContext,
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 import { useLocalStorageState } from "ahooks";
-export enum CategoryType {
-  All = 0,
-  Favorite = 1,
-}
+import { Category, CategoryType, Post } from "@/shared-types";
 
 const FeedContext = createContext({
   categories: [],
@@ -19,19 +18,37 @@ const FeedContext = createContext({
   setSelectedCategory: () => false,
 });
 
-export const FeedProvider = ({ children }) => {
-  const [categories, setCategories] = useState([]);
-  const [categoriesById, setCategoriesById] = useState({});
-  const [categoryType, setCategoryType] = useState(CategoryType.All);
+export const FeedProvider = ({
+  children,
+}: {
+  children: React.ReactElement;
+}) => {
+  const [posts, setPosts] = useState<Post>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const categoriesById = useMemo(() => {
+    return categories.reduce(
+      (acc: Record<string, Category>, category: Category) => {
+        acc[category.id] = category;
+        return acc;
+      },
+      {}
+    );
+  }, [categories]);
+  const [categoryType, setCategoryType] = useState<CategoryType>(
+    CategoryType.All
+  );
   const [selectedCategory, setSelectedCategory] = useLocalStorageState<
     string | undefined
   >("SELECTED_CATEGORY", {
     defaultValue: {},
   });
 
-  const [posts, setPosts] = useState([]);
-
-  const [shouldRefetch, setShouldRefetch] = useState(true);
+  const selectCategory = useCallback(async (category: Category) => {
+    const posts = await getPostsFromCategory(category.id);
+    setSelectedCategory(category);
+    setPosts(posts);
+  });
 
   const setFavorite = useCallback(
     async (id: string, favorite: boolean) => {
@@ -40,48 +57,25 @@ export const FeedProvider = ({ children }) => {
         ...category,
         favorite,
       });
-      setShouldRefetch(true);
+
+      const categories = await getCategories();
+      setCategories(categories);
     },
 
     [categoriesById]
   );
 
   useEffect(() => {
-    if (!shouldRefetch) return;
-
     const get = async () => {
       const categories = await getCategories();
       setCategories(categories);
 
-      const categoriesById = categories.reduce((acc, category) => {
-        acc[category.id] = category;
-        return acc;
-      }, {});
-
-      setCategoriesById(categoriesById);
-
-      if (categories.length === 0) return;
-
-      if (Object.keys(selectedCategory).length === 0)
-        setSelectedCategory(categories[0]);
-
-      const posts = await getPostsFromCategory(selectedCategory.id);
-      setPosts(posts);
-
-      setShouldRefetch(false);
-    };
-
-    get();
-  }, [shouldRefetch]);
-
-  useEffect(() => {
-    const get = async () => {
       const posts = await getPostsFromCategory(selectedCategory.id);
       setPosts(posts);
     };
 
     get();
-  }, [selectedCategory]);
+  }, []);
 
   return (
     <FeedContext.Provider
@@ -92,7 +86,7 @@ export const FeedProvider = ({ children }) => {
         setCategoryType,
         categoriesById,
         selectedCategory,
-        setSelectedCategory,
+        selectCategory,
         setFavorite,
       }}
     >
