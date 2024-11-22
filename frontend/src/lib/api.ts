@@ -1,4 +1,4 @@
-import { Category, Post } from "./shared-types";
+import { Category, Post } from "../shared-types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

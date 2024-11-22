@@ -1,4 +1,4 @@
-import { getCategories, getPostsFromCategory, setCategory } from "@/api";
+import { getCategories, getPostsFromCategory, setCategory } from "@/lib/api";
 
 import React, {
   createContext,
@@ -48,7 +48,7 @@ export const FeedProvider = ({
     const posts = await getPostsFromCategory(category.id);
     setSelectedCategory(category);
     setPosts(posts);
-  });
+  }, []);
 
   const setFavorite = useCallback(
     async (id: string, favorite: boolean) => {
@@ -61,7 +61,6 @@ export const FeedProvider = ({
       const categories = await getCategories();
       setCategories(categories);
     },
-
     [categoriesById]
   );
 
