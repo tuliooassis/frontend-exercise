@@ -6,7 +6,7 @@ The purpose of this challenge is to assess your daily work approach. We mostly u
 - Prepare code for building for production
 - Add unit tests with React Testing Library
 - Make Sidebar ready for mobile
-- 
+- Error handling
 
 ## Requirements
 
