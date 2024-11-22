@@ -2,6 +2,12 @@
 
 The purpose of this challenge is to assess your daily work approach. We mostly use React and TypeScript at Zypsy, but you can use any tools you feel most comfortable with.
 
+## Next steps
+- Prepare code for building for production
+- Add unit tests with React Testing Library
+- Make Sidebar ready for mobile
+- 
+
 ## Requirements
 
 We want you to develop entirely new view of posts list. Posts are accessible by category. Posts can have many categories.
